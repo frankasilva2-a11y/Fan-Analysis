@@ -1,0 +1,28 @@
+theme_pattern,sentiment,response_count,sentiment_percentage
+Other / unclassified,negative,1229,38.94
+Parking and transportation,negative,860,72.09
+Food and beverage,negative,544,56.02
+Staff and service,negative,484,66.94
+Queues and wait times,negative,439,75.04
+Entry and wayfinding,negative,405,69.47
+Restrooms,negative,195,59.63
+Affordability and value,negative,102,58.62
+Fan atmosphere and connection,negative,71,43.56
+Other / unclassified,neutral,1072,33.97
+Food and beverage,neutral,240,24.72
+Parking and transportation,neutral,216,18.11
+Entry and wayfinding,neutral,120,20.58
+Restrooms,neutral,105,32.11
+Staff and service,neutral,97,13.42
+Queues and wait times,neutral,75,12.82
+Affordability and value,neutral,41,23.56
+Fan atmosphere and connection,neutral,27,16.56
+Other / unclassified,positive,855,27.09
+Food and beverage,positive,187,19.26
+Staff and service,positive,142,19.64
+Parking and transportation,positive,117,9.81
+Queues and wait times,positive,71,12.14
+Fan atmosphere and connection,positive,65,39.88
+Entry and wayfinding,positive,58,9.95
+Affordability and value,positive,31,17.82
+Restrooms,positive,27,8.26

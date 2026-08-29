@@ -1,0 +1,147 @@
+theme_pattern,seating_location,sentiment,response_count,sentiment_percentage
+Affordability and value,Floor/Pit,negative,17,56.67
+Affordability and value,Floor/Pit,neutral,8,26.67
+Affordability and value,Floor/Pit,positive,5,16.67
+Affordability and value,General,negative,46,56.79
+Affordability and value,General,neutral,20,24.69
+Affordability and value,General,positive,15,18.52
+Affordability and value,Premium,negative,6,50.0
+Affordability and value,Premium,neutral,4,33.33
+Affordability and value,Premium,positive,2,16.67
+Affordability and value,Supporters Section,neutral,3,75.0
+Affordability and value,Supporters Section,positive,1,25.0
+Affordability and value,Unknown,negative,32,69.57
+Affordability and value,Unknown,neutral,6,13.04
+Affordability and value,Unknown,positive,8,17.39
+Affordability and value,VIP Floor/Pit,negative,1,100.0
+Entry and wayfinding,Floor/Pit,negative,171,75.0
+Entry and wayfinding,Floor/Pit,neutral,45,19.74
+Entry and wayfinding,Floor/Pit,positive,12,5.26
+Entry and wayfinding,General,negative,138,69.7
+Entry and wayfinding,General,neutral,42,21.21
+Entry and wayfinding,General,positive,18,9.09
+Entry and wayfinding,Premium,negative,35,58.33
+Entry and wayfinding,Premium,neutral,13,21.67
+Entry and wayfinding,Premium,positive,12,20.0
+Entry and wayfinding,Supporters Section,negative,3,75.0
+Entry and wayfinding,Supporters Section,neutral,1,25.0
+Entry and wayfinding,Unknown,negative,46,58.97
+Entry and wayfinding,Unknown,neutral,18,23.08
+Entry and wayfinding,Unknown,positive,14,17.95
+Entry and wayfinding,VIP Floor/Pit,negative,12,80.0
+Entry and wayfinding,VIP Floor/Pit,neutral,1,6.67
+Entry and wayfinding,VIP Floor/Pit,positive,2,13.33
+Fan atmosphere and connection,Floor/Pit,negative,7,63.64
+Fan atmosphere and connection,Floor/Pit,neutral,3,27.27
+Fan atmosphere and connection,Floor/Pit,positive,1,9.09
+Fan atmosphere and connection,General,negative,26,55.32
+Fan atmosphere and connection,General,neutral,9,19.15
+Fan atmosphere and connection,General,positive,12,25.53
+Fan atmosphere and connection,Premium,negative,1,12.5
+Fan atmosphere and connection,Premium,neutral,3,37.5
+Fan atmosphere and connection,Premium,positive,4,50.0
+Fan atmosphere and connection,Supporters Section,negative,6,75.0
+Fan atmosphere and connection,Supporters Section,neutral,1,12.5
+Fan atmosphere and connection,Supporters Section,positive,1,12.5
+Fan atmosphere and connection,Unknown,negative,31,34.83
+Fan atmosphere and connection,Unknown,neutral,11,12.36
+Fan atmosphere and connection,Unknown,positive,47,52.81
+Food and beverage,Floor/Pit,negative,54,58.06
+Food and beverage,Floor/Pit,neutral,27,29.03
+Food and beverage,Floor/Pit,positive,12,12.9
+Food and beverage,General,negative,212,52.87
+Food and beverage,General,neutral,112,27.93
+Food and beverage,General,positive,77,19.2
+Food and beverage,Premium,negative,63,54.78
+Food and beverage,Premium,neutral,33,28.7
+Food and beverage,Premium,positive,19,16.52
+Food and beverage,Supporters Section,negative,6,31.58
+Food and beverage,Supporters Section,neutral,9,47.37
+Food and beverage,Supporters Section,positive,4,21.05
+Food and beverage,Unknown,negative,202,60.3
+Food and beverage,Unknown,neutral,59,17.61
+Food and beverage,Unknown,positive,74,22.09
+Food and beverage,VIP Floor/Pit,negative,7,87.5
+Food and beverage,VIP Floor/Pit,positive,1,12.5
+Other / unclassified,Floor/Pit,negative,267,45.41
+Other / unclassified,Floor/Pit,neutral,208,35.37
+Other / unclassified,Floor/Pit,positive,113,19.22
+Other / unclassified,General,negative,569,40.47
+Other / unclassified,General,neutral,504,35.85
+Other / unclassified,General,positive,333,23.68
+Other / unclassified,Premium,negative,95,36.26
+Other / unclassified,Premium,neutral,105,40.08
+Other / unclassified,Premium,positive,62,23.66
+Other / unclassified,Supporters Section,negative,29,38.67
+Other / unclassified,Supporters Section,neutral,23,30.67
+Other / unclassified,Supporters Section,positive,23,30.67
+Other / unclassified,Unknown,negative,265,32.52
+Other / unclassified,Unknown,neutral,230,28.22
+Other / unclassified,Unknown,positive,320,39.26
+Other / unclassified,VIP Floor/Pit,negative,4,40.0
+Other / unclassified,VIP Floor/Pit,neutral,2,20.0
+Other / unclassified,VIP Floor/Pit,positive,4,40.0
+Parking and transportation,Floor/Pit,negative,127,68.65
+Parking and transportation,Floor/Pit,neutral,41,22.16
+Parking and transportation,Floor/Pit,positive,17,9.19
+Parking and transportation,General,negative,375,70.75
+Parking and transportation,General,neutral,97,18.3
+Parking and transportation,General,positive,58,10.94
+Parking and transportation,Premium,negative,86,78.18
+Parking and transportation,Premium,neutral,18,16.36
+Parking and transportation,Premium,positive,6,5.45
+Parking and transportation,Supporters Section,negative,7,50.0
+Parking and transportation,Supporters Section,neutral,4,28.57
+Parking and transportation,Supporters Section,positive,3,21.43
+Parking and transportation,Unknown,negative,264,74.79
+Parking and transportation,Unknown,neutral,56,15.86
+Parking and transportation,Unknown,positive,33,9.35
+Parking and transportation,VIP Floor/Pit,negative,1,100.0
+Queues and wait times,Floor/Pit,negative,117,79.59
+Queues and wait times,Floor/Pit,neutral,18,12.24
+Queues and wait times,Floor/Pit,positive,12,8.16
+Queues and wait times,General,negative,153,74.63
+Queues and wait times,General,neutral,32,15.61
+Queues and wait times,General,positive,20,9.76
+Queues and wait times,Premium,negative,29,85.29
+Queues and wait times,Premium,neutral,3,8.82
+Queues and wait times,Premium,positive,2,5.88
+Queues and wait times,Supporters Section,negative,2,40.0
+Queues and wait times,Supporters Section,neutral,2,40.0
+Queues and wait times,Supporters Section,positive,1,20.0
+Queues and wait times,Unknown,negative,134,70.9
+Queues and wait times,Unknown,neutral,19,10.05
+Queues and wait times,Unknown,positive,36,19.05
+Queues and wait times,VIP Floor/Pit,negative,4,80.0
+Queues and wait times,VIP Floor/Pit,neutral,1,20.0
+Restrooms,Floor/Pit,negative,89,61.81
+Restrooms,Floor/Pit,neutral,44,30.56
+Restrooms,Floor/Pit,positive,11,7.64
+Restrooms,General,negative,73,54.89
+Restrooms,General,neutral,50,37.59
+Restrooms,General,positive,10,7.52
+Restrooms,Premium,negative,13,72.22
+Restrooms,Premium,neutral,4,22.22
+Restrooms,Premium,positive,1,5.56
+Restrooms,Supporters Section,positive,1,100.0
+Restrooms,Unknown,negative,15,71.43
+Restrooms,Unknown,neutral,4,19.05
+Restrooms,Unknown,positive,2,9.52
+Restrooms,VIP Floor/Pit,negative,5,50.0
+Restrooms,VIP Floor/Pit,neutral,3,30.0
+Restrooms,VIP Floor/Pit,positive,2,20.0
+Staff and service,Floor/Pit,negative,169,74.78
+Staff and service,Floor/Pit,neutral,28,12.39
+Staff and service,Floor/Pit,positive,29,12.83
+Staff and service,General,negative,196,65.33
+Staff and service,General,neutral,42,14.0
+Staff and service,General,positive,62,20.67
+Staff and service,Premium,negative,56,62.22
+Staff and service,Premium,neutral,12,13.33
+Staff and service,Premium,positive,22,24.44
+Staff and service,Supporters Section,negative,10,100.0
+Staff and service,Unknown,negative,50,53.76
+Staff and service,Unknown,neutral,15,16.13
+Staff and service,Unknown,positive,28,30.11
+Staff and service,VIP Floor/Pit,negative,3,75.0
+Staff and service,VIP Floor/Pit,positive,1,25.0

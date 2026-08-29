@@ -1,0 +1,25 @@
+seating_segment,sentiment,count
+Floor/Pit,,297
+Floor/Pit,negative,1018
+Floor/Pit,neutral,422
+Floor/Pit,positive,212
+General,,576
+General,negative,1788
+General,neutral,908
+General,positive,605
+Premium,,159
+Premium,negative,384
+Premium,neutral,195
+Premium,positive,130
+Supporters Section,,17
+Supporters Section,negative,63
+Supporters Section,neutral,43
+Supporters Section,positive,34
+Unknown,,318
+Unknown,negative,1039
+Unknown,neutral,418
+Unknown,positive,562
+VIP Floor/Pit,,11
+VIP Floor/Pit,negative,37
+VIP Floor/Pit,neutral,7
+VIP Floor/Pit,positive,10
