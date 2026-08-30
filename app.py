@@ -7,26 +7,14 @@ from dash import Dash, Input, Output, dcc, html
 
 
 # ============================================================
-# CONFIGURATION
+# CONFIGURATION & APP INITIALIZATION
 # ============================================================
 
-# The "fan-experience" folder should sit next to this app.py file.
-#
-# Project structure:
-#
-# fan-experience-app/
-# ├── app.py
-# ├── requirements.txt
-# └── fan-experience/
-#     ├── fan_experience_analysis.csv
-#     ├── fan_experience_kpis.csv
-#     ├── fan_feedback_with_sentiment.csv
-#     ├── sentiment_by_seating_segment.csv
-#     ├── theme_sentiment_summary.csv
-#     └── theme_seating_sentiment_summary.csv
+# Initialize Dash application
+app = Dash(__name__)
+server = app.server
 
 DATA_DIR = Path(__file__).resolve().parent / "fan-experience"
-
 
 THEME_COLUMNS = [
     "Parking and transportation", "Entry and wayfinding", "Food and beverage",
@@ -38,12 +26,12 @@ SENTIMENT_COLORS = {"Positive": "#C39E6D", "Neutral": "#777777", "Negative": "#E
 
 def load_data():
     try:
-        analysis = dataiku.Dataset("fan_experience_analysis").get_dataframe()
-        kpis = dataiku.Dataset("fan_experience_kpis").get_dataframe()
-        feedback_with_sentiment = dataiku.Dataset("fan_feedback_with_sentiment").get_dataframe()
-        sentiment_by_segment = dataiku.Dataset("sentiment_by_seating_segment").get_dataframe()
-        theme_sentiment = dataiku.Dataset("theme_sentiment_summary").get_dataframe()
-        theme_seating_sentiment = dataiku.Dataset("theme_seating_sentiment_summary").get_dataframe()
+        analysis = pd.read_csv(DATA_DIR / "fan_experience_analysis.csv")
+        kpis = pd.read_csv(DATA_DIR / "fan_experience_kpis.csv")
+        feedback_with_sentiment = pd.read_csv(DATA_DIR / "fan_feedback_with_sentiment.csv")
+        sentiment_by_segment = pd.read_csv(DATA_DIR / "sentiment_by_seating_segment.csv")
+        theme_sentiment = pd.read_csv(DATA_DIR / "theme_sentiment_summary.csv")
+        theme_seating_sentiment = pd.read_csv(DATA_DIR / "theme_seating_sentiment_summary.csv")
         return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
     except Exception as exc:
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), str(exc)
@@ -146,8 +134,6 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
     chart_style(theme_fig, 10)
     theme_fig.update_traces(hovertemplate="%{y}: %{x}<extra></extra>")
 
-    # Use the aggregated total_spend_avg values when the overview includes all members.
-    # This preserves the membership-filtered view by calculating that subset from response-level data.
     if overview_member == "All" and not sentiment_segment_df.empty:
         spend_source = sentiment_segment_df.copy()
         if segment != "All":
@@ -257,12 +243,11 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
     chart_style(heatmap_fig)
     heatmap_fig.update_layout(coloraxis_colorbar_title="Share (%)")
 
-
     return cards, theme_fig, spend_fig, spend_by_sentiment_fig, explorer_feedback, sentiment_fig, sentiment_percentage_fig, comparison_fig, theme_count_fig, theme_percentage_fig, heatmap_fig
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
-
     app.run(
         host="0.0.0.0",
         port=port,
