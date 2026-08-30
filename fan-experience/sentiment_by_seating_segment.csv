@@ -1,25 +1,25 @@
-seating_segment,sentiment,count
-Floor/Pit,,297
-Floor/Pit,negative,1018
-Floor/Pit,neutral,422
-Floor/Pit,positive,212
-General,,576
-General,negative,1788
-General,neutral,908
-General,positive,605
-Premium,,159
-Premium,negative,384
-Premium,neutral,195
-Premium,positive,130
-Supporters Section,,17
-Supporters Section,negative,63
-Supporters Section,neutral,43
-Supporters Section,positive,34
-Unknown,,318
-Unknown,negative,1039
-Unknown,neutral,418
-Unknown,positive,562
-VIP Floor/Pit,,11
-VIP Floor/Pit,negative,37
-VIP Floor/Pit,neutral,7
-VIP Floor/Pit,positive,10
+seating_segment,sentiment,total_spend_avg,count
+Floor/Pit,,497.7734343434344,297
+Floor/Pit,negative,467.63140471512816,1018
+Floor/Pit,neutral,511.90563981042663,422
+Floor/Pit,positive,497.7431603773585,212
+General,,239.53909909909908,576
+General,negative,247.20258139534857,1788
+General,neutral,231.7602050113895,908
+General,positive,227.5265178571428,605
+Premium,,441.95092105263166,159
+Premium,negative,432.0501960784313,384
+Premium,neutral,499.1407142857142,195
+Premium,positive,526.5777192982456,130
+Supporters Section,,72.539375,17
+Supporters Section,negative,87.97473684210527,63
+Supporters Section,neutral,92.64974358974361,43
+Supporters Section,positive,157.05999999999997,34
+Unknown,,389.725,318
+Unknown,negative,295.1,1039
+Unknown,neutral,410.98999999999995,418
+Unknown,positive,199.7,562
+VIP Floor/Pit,,499.40909090909093,11
+VIP Floor/Pit,negative,613.2567567567568,37
+VIP Floor/Pit,neutral,559.2142857142857,7
+VIP Floor/Pit,positive,511.85,10
