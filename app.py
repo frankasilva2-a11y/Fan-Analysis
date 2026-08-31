@@ -89,6 +89,7 @@ app.layout = html.Div([
             html.Div([
                 html.Div([html.Label("LAFC membership", style={"fontWeight": "bold", "fontSize": "13px"}), dcc.Dropdown(id="theme-member-filter", options=[{"label": "All fan responses", "value": "All"}, {"label": "LAFC members", "value": "YES"}, {"label": "Non-members", "value": "NO"}], value="All", clearable=False)], style={"minWidth": "240px", "flex": "1"}),
                 html.Div([html.Label("Theme pattern", style={"fontWeight": "bold", "fontSize": "13px"}), dcc.Dropdown(id="theme-pattern-filter", options=[{"label": "All theme patterns", "value": "All"}] + [{"label": theme, "value": theme} for theme in theme_patterns], value="All", clearable=False)], style={"minWidth": "240px", "flex": "1"}),
+                html.Div([html.Label("Seating segment", style={"fontWeight": "bold", "fontSize": "13px"}), dcc.Dropdown(id="theme-segment-filter", options=[{"label": "All seating segments", "value": "All"}] + [{"label": x, "value": x} for x in segments], value="All", clearable=False)], style={"minWidth": "240px", "flex": "1"}),
             ], style={"display": "flex", "flexWrap": "wrap", "gap": "16px", "marginTop": "12px"}),
             dcc.Graph(id="theme-sentiment-count-chart"), dcc.Graph(id="theme-sentiment-percentage-chart"), dcc.Graph(id="theme-seating-sentiment-chart"),
         ], style={"padding": "24px 32px"})),
@@ -119,9 +120,9 @@ def chart_style(figure, bottom=70):
 
 @app.callback(
     Output("kpi-cards", "children"), Output("theme-chart", "figure"), Output("spend-distribution-chart", "figure"), Output("spend-by-sentiment-chart", "figure"), Output("explorer-feedback-list", "children"), Output("sentiment-comparison-chart", "figure"), Output("sentiment-percentage-chart", "figure"), Output("segment-comparison-chart", "figure"), Output("theme-sentiment-count-chart", "figure"), Output("theme-sentiment-percentage-chart", "figure"), Output("theme-seating-sentiment-chart", "figure"),
-    Input("segment-filter", "value"), Input("overview-member-filter", "value"), Input("spend-sentiment-segment-toggle", "value"), Input("feedback-segment-filter", "value"), Input("feedback-theme-filter", "value"), Input("feedback-sentiment-filter", "value"), Input("feedback-member-filter", "value"), Input("comparison-member-filter", "value"), Input("theme-member-filter", "value"), Input("theme-pattern-filter", "value")
+    Input("segment-filter", "value"), Input("overview-member-filter", "value"), Input("spend-sentiment-segment-toggle", "value"), Input("feedback-segment-filter", "value"), Input("feedback-theme-filter", "value"), Input("feedback-sentiment-filter", "value"), Input("feedback-member-filter", "value"), Input("comparison-member-filter", "value"), Input("theme-member-filter", "value"), Input("theme-pattern-filter", "value"), Input("theme-segment-filter", "value")
 )
-def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer_segment, explorer_theme, explorer_sentiment, explorer_member, comparison_member, theme_member, selected_pattern):
+def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer_segment, explorer_theme, explorer_sentiment, explorer_member, comparison_member, theme_member, selected_pattern, theme_segment):
     empty = px.bar(title="No data available")
     if analysis_df.empty:
         return [], empty, empty, empty, [], empty, empty, empty, empty, empty, empty
@@ -222,6 +223,7 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
             theme_data = theme_data[theme_data["member_segment"].fillna("").astype(str).str.upper() == theme_member]
         theme_data["theme_pattern"] = theme_data["primary_theme"].fillna("Other / unclassified")
         if selected_pattern != "All": theme_data = theme_data[theme_data["theme_pattern"] == selected_pattern]
+        if theme_segment != "All": theme_data = theme_data[theme_data["seating_segment"].fillna("Unspecified") == theme_segment]
         theme_data = theme_data.groupby(["theme_pattern", "sentiment"], as_index=False).size().rename(columns={"size": "response_count"})
         theme_data["sentiment"] = theme_data["sentiment"].str.title()
         theme_data["sentiment_percentage"] = 100 * theme_data["response_count"] / theme_data.groupby("theme_pattern")["response_count"].transform("sum")
@@ -241,6 +243,7 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
             seating_data = seating_data[seating_data["member_segment"].fillna("").astype(str).str.upper() == theme_member]
         seating_data["theme_pattern"] = seating_data["primary_theme"].fillna("Other / unclassified")
         if selected_pattern != "All": seating_data = seating_data[seating_data["theme_pattern"] == selected_pattern]
+        if theme_segment != "All": seating_data = seating_data[seating_data["seating_segment"].fillna("Unspecified") == theme_segment]
         seating_data = seating_data.groupby(["seating_segment", "sentiment"], as_index=False).size().rename(columns={"size": "response_count"})
         seating_data["seating_segment"] = seating_data["seating_segment"].fillna("Unspecified")
         seating_data["sentiment"] = seating_data["sentiment"].str.title()
