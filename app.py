@@ -23,11 +23,11 @@ def load_data():
         # 1. Get the directory where this app.py file is located
         current_dir = os.path.dirname(os.path.abspath(__file__))
         
-        # 2. Build the fallback path relative to app.py
-        fallback_path = os.path.join(current_dir, "data")
+        # 2. Build the fallback path using your actual folder name
+        fallback_path = os.path.join(current_dir, "fan-experience")
         
         # 3. Check local Mac path first, otherwise use the server path
-        local_path = "/Users/franksilva/Documents/fan-experience-app"
+        local_path = "/Users/franksilva/Documents/fan-experience-app/fan-experience"
         base_dir = local_path if os.path.exists(local_path) else fallback_path
         
         analysis = pd.read_csv(os.path.join(base_dir, "fan_experience_analysis.csv"))
