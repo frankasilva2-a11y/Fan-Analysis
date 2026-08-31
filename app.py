@@ -107,6 +107,9 @@ def load_data():
 app = Dash(__name__)
 app.title = "Fan Experience Explorer"
 
+# Expose underlying Flask WSGI server instance for Gunicorn/Render deployment
+server = app.server
+
 analysis_df, kpis_df, feedback_sentiment_df, sentiment_segment_df, theme_sentiment_df, theme_seating_sentiment_df, load_error = load_data()
 segments = sorted(analysis_df["seating_segment"].dropna().unique()) if "seating_segment" in analysis_df else []
 segment_order = (analysis_df["seating_segment"].fillna("Unspecified").value_counts().index.tolist() if "seating_segment" in analysis_df else [])
