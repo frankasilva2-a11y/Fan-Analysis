@@ -20,9 +20,10 @@ SENTIMENT_COLORS = {"Positive": "#C39E6D", "Neutral": "#777777", "Negative": "#E
 
 def load_data():
     try:
-        # Replaced Dataiku Dataset API with local CSV reading.
-        # Ensure you place these CSV files in a 'data' folder next to your app.py on Render
-        base_dir = "data"
+        # Use your local path, but fall back to "data" if running on Render
+        local_path = "/Users/franksilva/Documents/fan-experience-app"
+        base_dir = local_path if os.path.exists(local_path) else "data"
+        
         analysis = pd.read_csv(os.path.join(base_dir, "fan_experience_analysis.csv"))
         kpis = pd.read_csv(os.path.join(base_dir, "fan_experience_kpis.csv"))
         feedback_with_sentiment = pd.read_csv(os.path.join(base_dir, "fan_feedback_with_sentiment.csv"))
@@ -31,7 +32,7 @@ def load_data():
         theme_seating_sentiment = pd.read_csv(os.path.join(base_dir, "theme_seating_sentiment_summary.csv"))
         return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
     except Exception as exc:
-        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), f"Make sure you exported the Dataiku datasets to CSVs in a 'data' folder. Error: {str(exc)}"
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), f"Data could not be loaded. Error: {str(exc)}"
 
 
 analysis_df, kpis_df, feedback_sentiment_df, sentiment_segment_df, theme_sentiment_df, theme_seating_sentiment_df, load_error = load_data()
@@ -242,6 +243,7 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
     heatmap_fig.update_layout(coloraxis_colorbar_title="Share (%)")
 
     return cards, theme_fig, spend_fig, spend_by_sentiment_fig, explorer_feedback, sentiment_fig, sentiment_percentage_fig, comparison_fig, theme_count_fig, theme_percentage_fig, heatmap_fig
+
 
 # 3. Main execution block needed for local development & Render
 if __name__ == '__main__':
