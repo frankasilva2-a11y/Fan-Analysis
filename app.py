@@ -1,8 +1,15 @@
 import os
 import pandas as pd
 import plotly.express as px
-from dash import Dash, Input, Output, dcc, html
+import dash
+from dash import Input, Output, dcc, html
 
+# 1. Initialize the Dash app
+app = dash.Dash(__name__)
+app.title = "Fan Experience Explorer"
+
+# 2. Expose the underlying Flask server for Render/Gunicorn
+server = app.server
 
 THEME_COLUMNS = [
     "Parking and transportation", "Entry and wayfinding", "Food and beverage",
@@ -11,49 +18,21 @@ THEME_COLUMNS = [
 ]
 SENTIMENT_COLORS = {"Positive": "#C39E6D", "Neutral": "#777777", "Negative": "#E31837"}
 
-
 def load_data():
     try:
-        # Check for local CSV datasets exported from Dataiku
-        if (
-            os.path.exists("fan_experience_analysis.csv") and
-            os.path.exists("fan_experience_kpis.csv") and
-            os.path.exists("fan_feedback_with_sentiment.csv") and
-            os.path.exists("sentiment_by_seating_segment.csv") and
-            os.path.exists("theme_sentiment_summary.csv") and
-            os.path.exists("theme_seating_sentiment_summary.csv")
-        ):
-            analysis = pd.read_csv("fan_experience_analysis.csv")
-            kpis = pd.read_csv("fan_experience_kpis.csv")
-            feedback_with_sentiment = pd.read_csv("fan_feedback_with_sentiment.csv")
-            sentiment_by_segment = pd.read_csv("sentiment_by_seating_segment.csv")
-            theme_sentiment = pd.read_csv("theme_sentiment_summary.csv")
-            theme_seating_sentiment = pd.read_csv("theme_seating_sentiment_summary.csv")
-            return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
-        
-        # Try Dataiku import if hosted inside a Dataiku environment
-        try:
-            import dataiku
-            analysis = dataiku.Dataset("fan_experience_analysis").get_dataframe()
-            kpis = dataiku.Dataset("fan_experience_kpis").get_dataframe()
-            feedback_with_sentiment = dataiku.Dataset("fan_feedback_with_sentiment").get_dataframe()
-            sentiment_by_segment = dataiku.Dataset("sentiment_by_seating_segment").get_dataframe()
-            theme_sentiment = dataiku.Dataset("theme_sentiment_summary").get_dataframe()
-            theme_seating_sentiment = dataiku.Dataset("theme_seating_sentiment_summary").get_dataframe()
-            return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
-        except ImportError:
-            return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), "Dataiku package not found and CSV files missing."
-            
+        # Replaced Dataiku Dataset API with local CSV reading.
+        # Ensure you place these CSV files in a 'data' folder next to your app.py on Render
+        base_dir = "data"
+        analysis = pd.read_csv(os.path.join(base_dir, "fan_experience_analysis.csv"))
+        kpis = pd.read_csv(os.path.join(base_dir, "fan_experience_kpis.csv"))
+        feedback_with_sentiment = pd.read_csv(os.path.join(base_dir, "fan_feedback_with_sentiment.csv"))
+        sentiment_by_segment = pd.read_csv(os.path.join(base_dir, "sentiment_by_seating_segment.csv"))
+        theme_sentiment = pd.read_csv(os.path.join(base_dir, "theme_sentiment_summary.csv"))
+        theme_seating_sentiment = pd.read_csv(os.path.join(base_dir, "theme_seating_sentiment_summary.csv"))
+        return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
     except Exception as exc:
-        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), str(exc)
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), f"Make sure you exported the Dataiku datasets to CSVs in a 'data' folder. Error: {str(exc)}"
 
-
-# Initialize Dash application
-app = Dash(__name__)
-app.title = "Fan Experience Explorer"
-
-# Expose WSGI server instance for Gunicorn on Render
-server = app.server
 
 analysis_df, kpis_df, feedback_sentiment_df, sentiment_segment_df, theme_sentiment_df, theme_seating_sentiment_df, load_error = load_data()
 segments = sorted(analysis_df["seating_segment"].dropna().unique()) if "seating_segment" in analysis_df else []
@@ -152,8 +131,6 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
     chart_style(theme_fig, 10)
     theme_fig.update_traces(hovertemplate="%{y}: %{x}<extra></extra>")
 
-    # Use the aggregated total_spend_avg values when the overview includes all members.
-    # This preserves the membership-filtered view by calculating that subset from response-level data.
     if overview_member == "All" and not sentiment_segment_df.empty:
         spend_source = sentiment_segment_df.copy()
         if segment != "All":
@@ -208,6 +185,7 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
     chart_segment_order = [x for x in segment_order if x in chart_segments] + [x for x in chart_segments if x not in segment_order]
     sentiment_fig = px.bar(sentiment_data, x="seating_segment", y="count", color="sentiment", barmode="group", title="Survey sentiment frequency by seating segment", labels={"seating_segment": "Seating segment", "count": "Responses", "sentiment": "Sentiment"}, color_discrete_map=SENTIMENT_COLORS, category_orders={"seating_segment": chart_segment_order})
     chart_style(sentiment_fig)
+    
     sentiment_percentages = sentiment_data.copy()
     if not sentiment_percentages.empty: sentiment_percentages["percentage"] = sentiment_percentages["count"] / sentiment_percentages.groupby("seating_segment")["count"].transform("sum")
     sentiment_percentage_fig = px.bar(sentiment_percentages, x="seating_segment", y="percentage", color="sentiment", barmode="stack", title="Survey sentiment mix by seating segment", labels={"seating_segment": "Seating segment", "percentage": "Share of classified responses", "sentiment": "Sentiment"}, color_discrete_map=SENTIMENT_COLORS, category_orders={"seating_segment": chart_segment_order})
@@ -265,6 +243,8 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
 
     return cards, theme_fig, spend_fig, spend_by_sentiment_fig, explorer_feedback, sentiment_fig, sentiment_percentage_fig, comparison_fig, theme_count_fig, theme_percentage_fig, heatmap_fig
 
-
-if __name__ == "__main__":
-    app.run_server(debug=True, port=8050)
+# 3. Main execution block needed for local development & Render
+if __name__ == '__main__':
+    # Render assigns dynamic ports via the PORT env variable
+    port = int(os.environ.get("PORT", 8050))
+    app.run_server(host='0.0.0.0', port=port, debug=False)
