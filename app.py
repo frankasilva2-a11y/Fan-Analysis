@@ -20,9 +20,15 @@ SENTIMENT_COLORS = {"Positive": "#C39E6D", "Neutral": "#777777", "Negative": "#E
 
 def load_data():
     try:
-        # Use your local path, but fall back to "data" if running on Render
+        # 1. Get the directory where this app.py file is located
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # 2. Build the fallback path relative to app.py
+        fallback_path = os.path.join(current_dir, "data")
+        
+        # 3. Check local Mac path first, otherwise use the server path
         local_path = "/Users/franksilva/Documents/fan-experience-app"
-        base_dir = local_path if os.path.exists(local_path) else "data"
+        base_dir = local_path if os.path.exists(local_path) else fallback_path
         
         analysis = pd.read_csv(os.path.join(base_dir, "fan_experience_analysis.csv"))
         kpis = pd.read_csv(os.path.join(base_dir, "fan_experience_kpis.csv"))
@@ -30,7 +36,9 @@ def load_data():
         sentiment_by_segment = pd.read_csv(os.path.join(base_dir, "sentiment_by_seating_segment.csv"))
         theme_sentiment = pd.read_csv(os.path.join(base_dir, "theme_sentiment_summary.csv"))
         theme_seating_sentiment = pd.read_csv(os.path.join(base_dir, "theme_seating_sentiment_summary.csv"))
+        
         return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
+    
     except Exception as exc:
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), f"Data could not be loaded. Error: {str(exc)}"
 
