@@ -1,41 +1,111 @@
-from pathlib import Path
 import os
-
+import numpy as np
 import pandas as pd
 import plotly.express as px
 from dash import Dash, Input, Output, dcc, html
 
-
-# ============================================================
-# CONFIGURATION & APP INITIALIZATION
-# ============================================================
-
-# Initialize Dash application
-app = Dash(__name__)
-server = app.server
-
-DATA_DIR = Path(__file__).resolve().parent / "fan-experience"
-
+# Define domain constants
 THEME_COLUMNS = [
     "Parking and transportation", "Entry and wayfinding", "Food and beverage",
     "Queues and wait times", "Restrooms", "Staff and service",
     "Affordability and value", "Fan atmosphere and connection"
 ]
 SENTIMENT_COLORS = {"Positive": "#C39E6D", "Neutral": "#777777", "Negative": "#E31837"}
+SEATING_SEGMENTS = ["North Stand", "South Stand", "East Stand", "West Stand", "Premium Suites", "Supporters Section"]
 
+def generate_mock_datasets():
+    """Generates synthetic data matching Dataiku schema structure."""
+    np.random.seed(42)
+    n_samples = 500
+
+    segments_choice = np.random.choice(SEATING_SEGMENTS, size=n_samples)
+    members_choice = np.random.choice(["YES", "NO"], size=n_samples, p=[0.6, 0.4])
+    has_feedback_choice = np.random.choice([True, False], size=n_samples, p=[0.7, 0.3])
+    themes_choice = np.random.choice(THEME_COLUMNS, size=n_samples)
+    spend_choice = np.random.normal(loc=120, scale=35, size=n_samples).clip(20, 400)
+    sentiment_choice = np.random.choice(["positive", "neutral", "negative"], size=n_samples, p=[0.5, 0.3, 0.2])
+
+    analysis_df = pd.DataFrame({
+        "seating_segment": segments_choice,
+        "member_segment": members_choice,
+        "has_feedback": has_feedback_choice,
+        "primary_theme": themes_choice,
+        "total_spend": spend_choice
+    })
+
+    kpis_df = pd.DataFrame({
+        "metric": ["Total Responses", "Feedback Rate", "Avg Spend"],
+        "value": [n_samples, 0.70, 120.0]
+    })
+
+    feedback_with_sentiment_df = pd.DataFrame({
+        "seating_segment": segments_choice,
+        "member_segment": members_choice,
+        "has_feedback": has_feedback_choice,
+        "primary_theme": themes_choice,
+        "sentiment": sentiment_choice,
+        "feedback": [
+            f"Sample feedback comment {i}: Great energy in the stadium, concessions were clean and efficient!"
+            if s == "positive" else
+            f"Sample feedback comment {i}: Parking was slightly delayed and queues were longer than expected."
+            for i, s in enumerate(sentiment_choice)
+        ]
+    })
+
+    sentiment_by_segment_df = feedback_with_sentiment_df.groupby(
+        ["seating_segment", "sentiment"], as_index=False
+    ).agg(
+        count=("feedback", "count"),
+        total_spend_avg=("seating_segment", lambda x: np.random.uniform(80, 180))
+    )
+
+    theme_sentiment_df = feedback_with_sentiment_df.groupby(
+        ["primary_theme", "sentiment"], as_index=False
+    ).size().rename(columns={"primary_theme": "theme_pattern", "size": "count"})
+
+    theme_seating_sentiment_df = feedback_with_sentiment_df.groupby(
+        ["seating_segment", "primary_theme", "sentiment"], as_index=False
+    ).size().rename(columns={"primary_theme": "theme_pattern", "size": "count"})
+
+    return (
+        analysis_df,
+        kpis_df,
+        feedback_with_sentiment_df,
+        sentiment_by_segment_df,
+        theme_sentiment_df,
+        theme_seating_sentiment_df
+    )
 
 def load_data():
+    """Loads CSV files locally if present; falls back to synthetic dataset."""
     try:
-        analysis = pd.read_csv(DATA_DIR / "fan_experience_analysis.csv")
-        kpis = pd.read_csv(DATA_DIR / "fan_experience_kpis.csv")
-        feedback_with_sentiment = pd.read_csv(DATA_DIR / "fan_feedback_with_sentiment.csv")
-        sentiment_by_segment = pd.read_csv(DATA_DIR / "sentiment_by_seating_segment.csv")
-        theme_sentiment = pd.read_csv(DATA_DIR / "theme_sentiment_summary.csv")
-        theme_seating_sentiment = pd.read_csv(DATA_DIR / "theme_seating_sentiment_summary.csv")
+        if (
+            os.path.exists("fan_experience_analysis.csv") and
+            os.path.exists("fan_experience_kpis.csv") and
+            os.path.exists("fan_feedback_with_sentiment.csv") and
+            os.path.exists("sentiment_by_seating_segment.csv") and
+            os.path.exists("theme_sentiment_summary.csv") and
+            os.path.exists("theme_seating_sentiment_summary.csv")
+        ):
+            analysis = pd.read_csv("fan_experience_analysis.csv")
+            kpis = pd.read_csv("fan_experience_kpis.csv")
+            feedback_with_sentiment = pd.read_csv("fan_feedback_with_sentiment.csv")
+            sentiment_by_segment = pd.read_csv("sentiment_by_seating_segment.csv")
+            theme_sentiment = pd.read_csv("theme_sentiment_summary.csv")
+            theme_seating_sentiment = pd.read_csv("theme_seating_sentiment_summary.csv")
+            return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
+        
+        # Fallback to generated data outside Dataiku environment
+        analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment = generate_mock_datasets()
         return analysis, kpis, feedback_with_sentiment, sentiment_by_segment, theme_sentiment, theme_seating_sentiment, None
+
     except Exception as exc:
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), str(exc)
 
+
+# Initialize Dash application
+app = Dash(__name__)
+app.title = "Fan Experience Explorer"
 
 analysis_df, kpis_df, feedback_sentiment_df, sentiment_segment_df, theme_sentiment_df, theme_seating_sentiment_df, load_error = load_data()
 segments = sorted(analysis_df["seating_segment"].dropna().unique()) if "seating_segment" in analysis_df else []
@@ -48,7 +118,11 @@ app.layout = html.Div([
             html.H1("Fan Experience Explorer", style={"marginBottom": "4px", "color": "#C39E6D", "letterSpacing": "1px"}),
             html.P("Explore fan feedback, experience themes, and spending patterns.", style={"marginTop": "0", "color": "#FFFFFF"}),
         ]),
-        html.Img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Los_Angeles_Football_Club.svg/960px-Los_Angeles_Football_Club.svg.png", alt="Los Angeles Football Club logo", style={"height": "88px", "width": "auto", "objectFit": "contain"}),
+        html.Img(
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Los_Angeles_Football_Club.svg/960px-Los_Angeles_Football_Club.svg.png",
+            alt="Los Angeles Football Club logo",
+            style={"height": "88px", "width": "auto", "objectFit": "contain"}
+        ),
     ], style={"padding": "18px 32px", "backgroundColor": "#000000", "borderBottom": "4px solid #C39E6D", "display": "flex", "alignItems": "center", "justifyContent": "space-between", "gap": "24px"}),
     html.Div(id="load-error", children=(html.Div([html.B("Data could not be loaded: "), load_error], style={"color": "#E31837", "padding": "12px", "background": "#fff1f1"}) if load_error else None)),
     dcc.Tabs([
@@ -103,11 +177,20 @@ app.layout = html.Div([
 
 
 def card(label, value, note):
-    return html.Div([html.Div(label, style={"fontSize": "13px", "color": "#555"}), html.Div(value, style={"fontSize": "28px", "fontWeight": "bold", "margin": "6px 0", "color": "#000000"}), html.Div(note, style={"fontSize": "12px", "color": "#555"})], style={"background": "#fff", "border": "1px solid #C39E6D", "padding": "16px", "minWidth": "0", "width": "100%", "boxSizing": "border-box", "boxShadow": "0 1px 2px #ddd"})
+    return html.Div([
+        html.Div(label, style={"fontSize": "13px", "color": "#555"}),
+        html.Div(value, style={"fontSize": "28px", "fontWeight": "bold", "margin": "6px 0", "color": "#000000"}),
+        html.Div(note, style={"fontSize": "12px", "color": "#555"})
+    ], style={"background": "#fff", "border": "1px solid #C39E6D", "padding": "16px", "minWidth": "0", "width": "100%", "boxSizing": "border-box", "boxShadow": "0 1px 2px #ddd"})
 
 
 def chart_style(figure, bottom=70):
-    figure.update_layout(margin=dict(l=10, r=10, t=50, b=bottom), plot_bgcolor="#FFFFFF", paper_bgcolor="#FFFFFF", font={"family": "Neutraface, Arial, sans-serif", "color": "#000000"})
+    figure.update_layout(
+        margin=dict(l=10, r=10, t=50, b=bottom),
+        plot_bgcolor="#FFFFFF",
+        paper_bgcolor="#FFFFFF",
+        font={"family": "Neutraface, Arial, sans-serif", "color": "#000000"}
+    )
     return figure
 
 
@@ -247,9 +330,4 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8050))
-    app.run(
-        host="0.0.0.0",
-        port=port,
-        debug=False,
-    )
+    app.run_server(debug=True, port=8050)
