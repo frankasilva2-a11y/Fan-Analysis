@@ -160,13 +160,27 @@ def update_dashboard(segment, overview_member, spend_sentiment_segment, explorer
     spend_fig = px.bar(overview_member_spend, x="seating_segment", y="total_spend_num", title="Average total spend by seating segment", labels={"seating_segment": "Seating segment", "total_spend_num": "Average total spend ($)"}, color_discrete_sequence=["#C39E6D"], category_orders={"seating_segment": overview_spend_order})
     chart_style(spend_fig, 10)
 
-    spend_by_sentiment = sentiment_segment_df.copy()
-    if spend_sentiment_segment != "All":
-        spend_by_sentiment = spend_by_sentiment[spend_by_sentiment["seating_segment"].fillna("Unspecified") == spend_sentiment_segment]
-    spend_by_sentiment["total_spend_avg"] = pd.to_numeric(spend_by_sentiment["total_spend_avg"], errors="coerce")
-    spend_by_sentiment = spend_by_sentiment.dropna(subset=["sentiment", "total_spend_avg"])
-    spend_by_sentiment["sentiment"] = spend_by_sentiment["sentiment"].astype(str).str.title()
-    spend_by_sentiment = spend_by_sentiment.groupby("sentiment", as_index=False)["total_spend_avg"].mean()
+    if overview_member == "All":
+        spend_by_sentiment = sentiment_segment_df.copy()
+        if spend_sentiment_segment != "All":
+            spend_by_sentiment = spend_by_sentiment[spend_by_sentiment["seating_segment"].fillna("Unspecified") == spend_sentiment_segment]
+        spend_by_sentiment["total_spend_avg"] = pd.to_numeric(spend_by_sentiment["total_spend_avg"], errors="coerce")
+        spend_by_sentiment = spend_by_sentiment.dropna(subset=["sentiment", "total_spend_avg"])
+        spend_by_sentiment["sentiment"] = spend_by_sentiment["sentiment"].astype(str).str.title()
+        spend_by_sentiment = spend_by_sentiment.groupby("sentiment", as_index=False)["total_spend_avg"].mean()
+    else:
+        spend_by_sentiment = feedback_sentiment_df.copy()
+        if not spend_by_sentiment.empty:
+            spend_by_sentiment = spend_by_sentiment[spend_by_sentiment["has_feedback"].fillna(False).astype(bool)]
+            spend_by_sentiment = spend_by_sentiment[spend_by_sentiment["sentiment"].isin(["positive", "neutral", "negative"])]
+            if "member_segment" in spend_by_sentiment:
+                spend_by_sentiment = spend_by_sentiment[spend_by_sentiment["member_segment"].fillna("").astype(str).str.upper() == overview_member]
+            if spend_sentiment_segment != "All":
+                spend_by_sentiment = spend_by_sentiment[spend_by_sentiment["seating_segment"].fillna("Unspecified") == spend_sentiment_segment]
+        spend_by_sentiment["total_spend_avg"] = pd.to_numeric(spend_by_sentiment["total_spend"], errors="coerce")
+        spend_by_sentiment = spend_by_sentiment.dropna(subset=["sentiment", "total_spend_avg"])
+        spend_by_sentiment["sentiment"] = spend_by_sentiment["sentiment"].astype(str).str.title()
+        spend_by_sentiment = spend_by_sentiment.groupby("sentiment", as_index=False)["total_spend_avg"].mean()
     spend_by_sentiment["sentiment"] = pd.Categorical(spend_by_sentiment["sentiment"], categories=["Positive", "Neutral", "Negative"], ordered=True)
     spend_by_sentiment = spend_by_sentiment.sort_values("sentiment")
     chart_title = "Average total spend by sentiment" if spend_sentiment_segment == "All" else f"Average total spend by sentiment — {spend_sentiment_segment}"
